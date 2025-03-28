@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🎂 Josim VIP Age Calculator 🎂</title>
+    <style>
+        @keyframes blinkShadow {
+            0% { text-shadow: 0px 0px 10px #00ff00; }
+            100% { text-shadow: 0px 0px 20px #00ff00; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #111;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+        .container {
+            padding: 20px;
+            background: rgba(34, 34, 34, 0.9);
+            box-shadow: 0 0 20px #00ff00;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1, input, button {
+            animation: blinkShadow 1s infinite alternate;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            text-align: center;
+            width: 90%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input {
+            background: #222;
+            color: #00ff00;
+            box-shadow: 0 0 8px #00ff00;
+        }
+
+        button {
+            background: #00ff00;
+            color: black;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 0 8px #00ff00;
+        }
+
+        button:hover {
+            background: #00cc00;
+            transform: scale(1.1);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎂 Josim VIP Age Calculator 🎂</h1>
+        <input type="text" id="name" placeholder="আপনার নাম লিখুন">
+        <input type="text" id="dob" placeholder="DD/MM/YYYY (জন্ম তারিখ)" maxlength="10" oninput="formatDateInput(this)">
+        <button onclick="calculateAge()">Calculate Age</button>
+        <div id="result" class="result"></div>
+        <button id="shareBtn" style="display:none;" onclick="shareAge()">📤 শেয়ার করো</button>
+        <button id="copyBtn" style="display:none;" onclick="copyAge()">📋 কপি করো</button>
+    </div>
+
+    <footer>©️ Made by - Josim</footer>
+
+    <script>
+        function formatDateInput(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
+            if (value.length > 5) value = value.slice(0, 5) + '/' + value.slice(5, 9);
+            input.value = value;
+        }
+
+        function calculateAge() {
+            let name = document.getElementById('name').value;
+            let dob = document.getElementById('dob').value;
+
+            if (name === "" || dob === "") {
+                alert("নাম এবং জন্মতারিখ দিন!");
+                return;
+            }
+
+            let parts = dob.split("/");
+            if (parts.length !== 3) {
+                alert("জন্ম তারিখ ফরম্যাট ভুল! DD/MM/YYYY আকারে লিখুন।");
+                return;
+            }
+
+            let birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            let now = new Date();
+            let ageMilliseconds = now - birthDate;
+
+            let ageYears = Math.floor(ageMilliseconds / (1000 * 60 * 60 * 24 * 365));
+            let ageMonths = Math.floor((ageMilliseconds % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            let ageDays = Math.floor((ageMilliseconds % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            let ageHours = Math.floor((ageMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let ageMinutes = Math.floor((ageMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+            let ageSeconds = Math.floor((ageMilliseconds % (1000 * 60)) / 1000);
+
+            document.getElementById('result').innerHTML = `
+                <h2>🔰 ${name}, তোমার বয়স হলো!</h2>
+                <h3>🟢 ${ageYears} বছর</h3>
+                <h3>🟡 ${ageMonths} মাস</h3>
+                <h3>🔴 ${ageDays} দিন</h3>
+                <h3>💙 ${ageHours} ঘণ্টা</h3>
+                <h3>💚 ${ageMinutes} মিনিট</h3>
+                <h3>💜 ${ageSeconds} সেকেন্ড</h3>
+                <h3>🖤 ${ageMilliseconds} মিলিসেকেন্ড</h3>
+            `;
+
+            document.getElementById("shareBtn").style.display = "block";
+            document.getElementById("copyBtn").style.display = "block";
+        }
+
+        function shareAge() {
+            let name = document.getElementById('name').value;
+            let resultText = document.getElementById('result').innerText;
+
+            let shareMessage = `🎉 Generated By - Josim VIP Age Calculator 🎂\n\n🔰 ${name}, তোমার বয়স হলো!\n\n${resultText.replace(/\n/g, "\n")}\n\n©️ Made by - Josim`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: "Josim VIP Age Calculator",
+                    text: shareMessage
+                });
+            } else {
+                alert("আপনার ডিভাইস শেয়ার সাপোর্ট করে না! ম্যানুয়ালি কপি করুন।");
+            }
+        }
+
+        function copyAge() {
+            let name = document.getElementById('name').value;
+            let resultText = document.getElementById('result').innerText;
+
+            let copyText = `🎉 Generated By - Josim VIP Age Calculator 🎂\n\n${resultText.replace(/\n/g, "\n")}\n\n©️ Made by - Josim`;
+
+            navigator.clipboard.writeText(copyText).then(() => {
+                alert("✅ কপি হয়েছে! এখন যেকোনো জায়গায় পেস্ট করুন।");
+            }, () => {
+                alert("❌ কপি করতে সমস্যা হচ্ছে! ম্যানুয়ালি কপি করুন।");
+            });
+        }
+    </script>
+
+</body>
+</html>
